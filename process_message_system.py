@@ -1,5 +1,7 @@
 import sys, os, queue, pickle
 
+ANY = 'any'
+
 class MessageProc():
 
     def main(self, *args):
