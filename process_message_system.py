@@ -2,11 +2,17 @@ import sys, os, queue, pickle
 
 ANY = 'any'
 
+# get a named pipe path with an integer pid
+def getPipePath(pid):
+    return "/tmp/pipe" + str(pid)
+
 
 class MessageProc():
 
     def main(self, *args):
-        os.mkfifo("/tmp/pipe" + str(os.getpid()))
+        pipePath = getPipePath(os.getpid())
+        if not os.path.exists(pipePath):
+            os.mkfifo(pipePath)
         # print("main:", os.getpid())
         self.queue = queue.Queue()
 
@@ -18,25 +24,27 @@ class MessageProc():
             return pid
 
     def give(self, pid, message, *values):
-        isExisting = os.path.exists("/tmp/pipe" + str(pid))
+        
+        pipePath = getPipePath(pid)
+        isExisting = os.path.exists(pipePath)
         # print("/tmp/pipe" + str(pid))
         while not isExisting:
-            isExisting = os.path.exists("/tmp/pipe" + str(pid))
+            isExisting = os.path.exists(pipePath)
             # print(isExisting)
-
-        pipe = open("/tmp/pipe" + str(pid))
+            
+        pipe = open(pipePath, "wb")
         pickle.dump({message, values}, pipe)
         pipe.close()
 
     def receive(self, *args):
-
-        something = self.queue.get()
+        print("receiving...")
+        # something = self.queue.get()
         # pickle.load()
 
 
 class Message():
 
-    def __init__(self, data, action, guard=None):
+    def __init__(self, data, action, guard=lambda: True):
 
         self.data = data
         self.action = action
