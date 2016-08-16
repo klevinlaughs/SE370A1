@@ -1,0 +1,30 @@
+''''
+	self.arrived_condition = threading.Condition()
+	
+	#this should be in main. target is the method to run. daemon means if process shuts down, so will it
+	
+	
+	transfer_thread = threading.Thread(target=self.extract_from_pipe, daemon = True)
+	transfer_thread.start()
+
+	#FROM ROBERT'S LECTURES
+def extract_from_pipe(self):
+	with open(self.make_address(os.getpid()), 'rb') as pipe_rd:
+		while True:
+			try:
+				message = pickle.load(pipe_rd)
+				with self.arrived_condition:
+					self.communication_queue.put(message)
+					self.arrived_condition.notify() #wake up waiters
+				except EOFError:
+					#When the file hasn't been opened to write yet
+					time.sleep(0.01)
+					
+		
+	with self.arrived_condition:
+		self.arrived_condition.wait()
+		
+
+#if nothing matches, should block
+#read Condition.notify() and wait() stuff
+'''
