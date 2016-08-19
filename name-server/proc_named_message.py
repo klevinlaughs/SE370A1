@@ -11,9 +11,10 @@ class NamedMessageProc(MessageProc):
         while not os.path.exists(pipePath):
             time.sleep(0.001)
             
-        values = (name, os.getpid())
+        values = [name, os.getpid()]
         
         pipe  = open(pipePath, "wb", buffering=0)
+        # pickle.dump(("register", name, os.getpid()), pipe)
         pickle.dump(("register", values), pipe)
         
     # get pid from name server, and return it to sender
@@ -24,7 +25,8 @@ class NamedMessageProc(MessageProc):
         while not os.path.exists(pipePath):
             time.sleep(0.001)
             
-        values = (name, returnPid)
+        values = [name, returnPid]
         
         pipe  = open(pipePath, "wb", buffering=0)
+        # pickle.dump(("get", name, returnPid), pipe)
         pickle.dump(("get", values), pipe)

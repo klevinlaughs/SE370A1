@@ -5,8 +5,11 @@ class Consumer(NamedMessageProc):
     
     def main(self, *args):
         super().main()
+        
+        print("consumer registering")
         self.registerOnNameServer("consumer")
         
+        print("consumer getting buffer pid")
         buffer = self.getProcPid("buffer", os.getpid())
         
         while True:

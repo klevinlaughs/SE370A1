@@ -7,6 +7,7 @@ class Producer(NamedMessageProc):
         super().main()
         # self.registerOnNameServer("producer")
         
+        print("producer getting buffer pid")
         buffer = self.getProcPid("buffer", os.getpid())
         
         for i in range(1, 1001):

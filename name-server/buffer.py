@@ -7,6 +7,7 @@ class Buffer(NamedMessageProc):
         super().main()
         buffer_space = []
         
+        print("buffer registering")
         self.registerOnNameServer("buffer")
         
         while True:

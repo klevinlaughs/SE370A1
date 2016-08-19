@@ -28,15 +28,16 @@ class NameServer(MessageProc):
             self.receive(
                 Message(
                     'register',
-                    action=lambda data: self.register(data[0], data[1])),
+                    action=lambda name, pid: self.register(name, pid)),
                 Message(
                     'get',
-                    action=lambda values: self.give(values[1], "response", self.getPid(values[0]))),
+                    action=lambda name, returnPid: self.give(returnPid, "response", self.getPid(name))),
                 Message(
                     'stop',
                     action=lambda : self.finish))
         
     def register(self, name, pid):
+        print("registering", name, pid)
         self.addressBook[name] = pid
         
     def getPid(self, name):
