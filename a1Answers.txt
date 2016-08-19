@@ -20,7 +20,8 @@ request met at a given time, which means there is no need for an actual object l
 A pid as a means of identification for communication means that someone can predict the pipe name, and hijack
 the communications system and pretend to be the sender. The hijacker can send malicious content, or corrupt 
 content data, which may make the other process fail. As well as being a sender, there could also be a spy on 
-the recipient, in case of sensitive data being transferred.
+the recipient, in case of sensitive data being transferred. It is even possible for the spy to pretend to 
+actually be the recipient too.
 
 4.
 The name_server.py will start a customized MessageProc class called NameServer, which has a hardcoded named 
