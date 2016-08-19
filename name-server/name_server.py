@@ -23,7 +23,6 @@ class NameServer(MessageProc):
         # register clean up method
         atexit.register(self.cleanUp)
         
-        # TODO: while true, keep receiving messages like register, get, stop?
         while True:
             self.receive(
                 Message(
@@ -34,14 +33,14 @@ class NameServer(MessageProc):
                     action=lambda name, returnPid: self.give(returnPid, "response", self.getPid(name))),
                 Message(
                     'stop',
-                    action=lambda : self.finish))
+                    action=lambda : self.finish()))
         
     def register(self, name, pid):
-        print("registering", name, pid)
         self.addressBook[name] = pid
         
+    # return None if it doesn't exist
     def getPid(self, name):
-        return self.addressBook[name]
+        return self.addressBook.get(name)
         
     def finish(self):
         sys.exit()

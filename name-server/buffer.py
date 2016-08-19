@@ -7,7 +7,6 @@ class Buffer(NamedMessageProc):
         super().main()
         buffer_space = []
         
-        print("buffer registering")
         self.registerOnNameServer("buffer")
         
         while True:
@@ -25,7 +24,8 @@ class Buffer(NamedMessageProc):
                     action=self.finish))
                     
     def finish(self):
-        # self.give(self.main_proc, 'completed', self.count)
+        consumerPid = self.getProcPid("consumer", os.getpid())
+        self.give(consumerPid, "stop")
         sys.exit()
         
 if __name__ == "__main__":
