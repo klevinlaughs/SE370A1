@@ -9,7 +9,7 @@ class Consumer(MessageProc):
             self.receive(
                 Message(
                     'data',
-                    action=lambda x: print(x)),
+                    action=lambda x, y: print(x, y)),
                 Message(
                     'stop',
                     action=lambda: sys.exit()))
@@ -19,5 +19,5 @@ if __name__=='__main__': # really do need this
     me.main()
     consumer = Consumer().start()
     for num in range(1000):
-        me.give(consumer, 'data', num + 1)
+        me.give(consumer, 'data', num + 1, num - 1)
     me.give(consumer, 'stop')

@@ -36,6 +36,8 @@ class MessageProc():
     # giving messages
     def give(self, pid, message, *values):
         
+        # https://piazza.com/class/iq3b3pjuy6t18z?cid=77
+        
         pipePath = self.getPipePath(pid)
         
         # if we are giving to a new pipe/process
