@@ -1,19 +1,19 @@
+# Kelvin Chris Lau, klau158, 9682466
+
 from proc_named_message import *
 
 # adapted from multiple_consumer.py
 class Consumer(NamedMessageProc):
     
-    def main(self, *args):
-        super().main()
-        
-        self.registerOnNameServer("consumer")
+    def main(self, name, *args):
+        super().main(name, *args)
         
         # making a requirement that the buffer should exist,
         # because consumer consumes from the buffer
         buffer = None
         while buffer == None:
             time.sleep(0.01)
-            buffer = self.getProcPid("buffer", os.getpid())
+            buffer = self.getProcPid("buffer")
         
         while True:
             self.give(buffer, 'get', os.getpid())
@@ -43,4 +43,4 @@ class Consumer(NamedMessageProc):
         sys.exit()
 
 if __name__ == "__main__":
-    Consumer().main()
+    Consumer().main("consumer")

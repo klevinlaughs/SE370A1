@@ -1,13 +1,13 @@
+# Kelvin Chris Lau, klau158, 9682466
+
 from proc_named_message import *
 
 # adapted from multiple_consumer.py
 class Buffer(NamedMessageProc):
 
-    def main(self, *args):
-        super().main()
+    def main(self, name, *args):
+        super().main(name, *args)
         buffer_space = []
-        
-        self.registerOnNameServer("buffer")
         
         while True:
             self.receive(
@@ -24,9 +24,9 @@ class Buffer(NamedMessageProc):
                     action=self.finish))
                     
     def finish(self):
-        consumerPid = self.getProcPid("consumer", os.getpid())
+        consumerPid = self.getProcPid("consumer")
         self.give(consumerPid, "stop")
         sys.exit()
         
 if __name__ == "__main__":
-    Buffer().main()
+    Buffer().main("buffer")

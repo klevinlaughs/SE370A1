@@ -1,0 +1,46 @@
+Kelvin Chris Lau, klau158, 9682466
+
+1.
+There is a buffer size associated with a file before the contents in a buffer is written to the file/pipe.
+If the contents of a single message is greater than the buffer size, the contents is split based on the buffer 
+size and that makes it possible for messages to be "half written" into the file/pipe, allowing another process 
+to fit in between, or being split itself. This creates the possibility for the messages to be interleaved.
+It wont be interleaved if the contents is smaller than the buffer size, which lets all of the contents be 
+written as one, or if the buffering is toggled of completely for the writing, in which case the contents are 
+written immediately.
+
+2.
+The Buffer object is the only one who is directly using the buffer_space, while all other processes are only
+making requests for the data contained in the buffer_space. These requests are handled in a synchronized and
+thread-safe manner. It is thread-safe because of the way MessageProc is implemented, of which it is a 
+subclass. All requests are handled by the receive method, which only allows a single thread to have its 
+request met at a given time, which means there is no need for an actual object lock.
+
+3.
+A pid as a means of identification for communication means that someone can predict the pipe name, and hijack
+the communications system and pretend to be the sender. The hijacker can send malicious content, or corrupt 
+content data, which may make the other process fail. As well as being a sender, there could also be a spy on 
+the recipient, in case of sensitive data being transferred.
+
+4.
+The name_server.py will start a customized MessageProc class called NameServer, which has a hardcoded named 
+pipe "/tmp/pipe_name_server" and this is the "address book" for processes and their address/pid.
+For a process to be able to be found in the NameServer, it must register itself, giving itself a name, and its 
+own pid.
+Since all processes using the NamedServer should register on it, they should subclass a subclassed
+MessageProc which makes requires a string as input into the main, which will be its registered name.
+This subclass is called NamedMessageProc, and it also provides a method to find a pid for a given name by making
+a request to the named server, and the NamedServer should respond by sending it back, if it exists, otherwise 
+None is sent back, and the NamedMessageProc should handle that itself.
+If a NamedMessageProc object would like to communicate to another process (provided that it uses similar
+communication methods), it can get the pid via the NameServer and then execute the usual self.give(...),
+and those messages received with the usual self.receive(...).
+
+Examples:
+    To create the process:
+        # input is the name the process registers as
+        NamedMessageProcObject().main("THE_PROCESS")
+        
+    A NamedMessageProc object looking up a process
+        # first input is the registered name
+        self.getProcPid("OTHER_PROCESS")
